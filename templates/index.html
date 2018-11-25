@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+
+<div align= "center">
+<div id=box>
+    <br><br>
+  <h1>Wines</h1>
+
+  <h5 align = "center"><em>By Thomas Park.</em></h5>
+<br>
+  <div align = center>
+    <img width = "700" src = "/static/wines.jpg">
+</div>
+<br>
+ <h3 align = "center">Please give me some wine.</h3>
+ <br>
+ <hr />
+ <br><br>
+
+<form action = '/add' method = 'POST' align = "center">
+
+  <h2>Let's Get Started.</h2><br>
+  <label> Please enter the name of a wine.<br><br>
+          <input name="name" type="text" value = "" />
+      </label>
+
+<br><br>
+
+  <label> Please enter the description of a wine.<br><br>
+          <input name="descript" type = "text" value = "" />
+      </label>
+
+<br><br>
+
+<input type="submit" />
+
+<br><br>
+{{error}}
+<br>
+
+</div>
+</form>
+
+<hr />
+<br><br>
+<div align=center>
+    <div id=box>
+<form action = '/remove' method = 'POST' align = "center">
+
+    <h2>Remove a wine.</h2><br>
+    <label> Please enter the name of the wine to remove.<br><br>
+            <input name="remname" type="text" value = "" />
+        </label>
+
+  <input type="submit" />
+  
+  <br><br>
+  {{error2}}
+  <br>
+  </div>
+  </form>
+  
+  <hr />
+<br><br>
+<div align=center>
+    <div id=box>
+    <h1>Here are the wines we have:</h1><br>
+
+    <ul align = "left">
+        {% for wine in wines %}
+        <li>{{wine}}</li>
+        {% endfor %}
+    </ul>
+    
+<br><br>
+
+<p align = "center">Press <a href = "/logout">here</a> to logout.</p>
+
+    </div>
+    {% endblock %}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+            <title>WINES</title>
+
+            <link rel="stylesheet" href = "/static/bootstrapscr.css">
+
+    </head>
+    <body style = "background-color: rgb(238, 192, 217);">
+
+    {% block content %}
+    {% endblock %}
+
+    {% with messages = get_flashed_messages() %}
+
+    {% for message in messages %}
+        <p><em>{{message}}</em></p><br>
+
+        {% endfor %}
+{% endwith %}
+
+</body>
+<foot align = center>
+        <h6>Public Domain Mark 1.0</h6>
+        </foot>
+        <br><br>
+</html>

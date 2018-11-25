@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div align= "center">
+        <div id=box>
+            <br><br>
+<h1>Sign Up To Wines</h1>
+<form action="/signup" method="post" align = "center">
+    <table align = "center">
+        <tr>
+            <td><label for="email">Email</label></td>
+            <td>
+                <input name="email" type="email" value="{{ email }}">
+            </td>
+        </tr>
+        <tr>
+            <td><label for="password">Password</label></td>
+            <td>
+                <input name="password" type="password">
+            </td>
+        </tr>
+        <tr>
+            <td><label for="verify">Verify Password</label></td>
+            <td>
+                <input name="verify" type="password">
+            </td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" value="Sign Up">
+</form>
+<br><br>
+<p align = "center">Press <a href = "/login">here</a> to login.</p>
+<br>
+    </div>
+<br><br>
+{% endblock %}
