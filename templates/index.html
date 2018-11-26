@@ -22,9 +22,15 @@
 <form action = '/add' method = 'POST' align = "center">
 
   <h2>Let's Get Started.</h2><br>
-  <label> Please enter the name of a wine.<br><br>
-          <input name="name" type="text" value = "" />
+  <label> Please enter the brand of a wine (ie Yellow Tail, Gallo, etc).<br><br>
+          <input name="brand" type="text" value = "" />
       </label>
+
+<br><br>
+
+<label> Please enter the variety of a wine (ie Cabernet Sauvignon, Chablis, etc).<br><br>
+        <input name="variety" type="text" value = "" />
+    </label>
 
 <br><br>
 
@@ -50,9 +56,15 @@
 <form action = '/remove' method = 'POST' align = "center">
 
     <h2>Remove a wine.</h2><br>
-    <label> Please enter the name of the wine to remove.<br><br>
-            <input name="remname" type="text" value = "" />
+    <label> Please enter the brand of the wine to remove (ie Yellow Tail, Gallo, etc).<br><br>
+            <input name="rembrand" type="text" value = "" />
         </label>
+        <br><br>
+
+    <label> Please enter the variety of the wine to remove (ie Cabernet Sauvignon, Chablis, etc).<br><br>
+            <input name="remvariety" type="text" value = "" />
+        </label>
+        <br><br>
 
   <input type="submit" />
   

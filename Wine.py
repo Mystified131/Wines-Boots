@@ -12,12 +12,15 @@ app.secret_key = os.urandom(24)
 class Wine(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.String(120))
-    name = db.Column(db.String(120))
+    brand = db.Column(db.String(120))
+    variety = db.Column(db.String(120))
     description = db.Column(db.String(120))
+    userid = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, timestamp, name, description):
+    def __init__(self, timestamp, brand, variety, description, userod):
         self.timestamp = timestamp
-        self.name = name
+        self.brand = brand
+        self.variety = variety
         self.description = description
 
 class User(db.Model):
@@ -28,6 +31,8 @@ class User(db.Model):
     def __init__(self, email, password):
         self.email = email
         self.password = password
+
+    #wines = db.relationship('Wine', backref='userid')
 
 def make_salt():
     sal = ""
@@ -119,7 +124,7 @@ def index():
     wines = Wine.query.all()
     winelist = []
     for wine in wines:
-        winestr = wine.name + ": " + wine.description
+        winestr = wine.brand + ": " + wine.variety + "- " + wine.description
         winelist.append(winestr)
     winelist.sort()
     return render_template('index.html', wines = winelist)
@@ -131,50 +136,60 @@ def frontpage():
 @app.route("/add", methods =['GET', 'POST'])
 def add():
     error = ""
-    winename = request.form["name"]
+    winebrand = request.form["brand"]
+    winevariety = request.form["variety"]
     winedescript = request.form["descript"]
     timestamp = session['timestamp']
-    name = cgi.escape(winename)
-    name = name.lower()
+    brand = cgi.escape(winebrand)
+    brand = brand.lower()
+    variety = cgi.escape(winevariety)
+    variety = variety.lower()
     description = cgi.escape(winedescript)
-    old_wine = Wine.query.filter_by(name=name).first()
-    if old_wine or not name or not description:
+    description = description.lower()
+    old_wine = Wine.query.filter_by(brand=brand, variety=variety).first()
+    if old_wine or not brand or not variety or not description:
         if not description:
             error = "Please describe the wine, in order to add it."
-        if not name:
-            error = "There is no wine with no name."
+        if not variety:
+            error = "There is no wine with no variety."
+        if not brand:
+            error = "There is no wine with no brand."
         if old_wine:
             error = "That wine is already in the database."
         wines = Wine.query.all()
         winelist = []
         for wine in wines:
-            winestr = wine.name + ": " + wine.description
+            winestr = wine.brand + ": " + wine.variety + "- " + wine.description
             winelist.append(winestr)
         winelist.sort()
         return render_template('index.html', wines = winelist, error = error)
-    new_wine = Wine(timestamp, name, description)
+    curusr = User.query.filter_by(email = session['email']).first()
+    userid = curusr.id
+    new_wine = Wine(timestamp, brand, variety, description, userid)
     db.session.add(new_wine)
     db.session.commit()
     wines = Wine.query.all()
     winelist = []
     for wine in wines:
-        winestr = wine.name + ": " + wine.description
+        winestr = wine.brand + ": " + wine.variety + "- " + wine.description
         winelist.append(winestr)
     winelist.sort()
     return render_template('index.html', wines = winelist)
 
 @app.route("/remove", methods =['GET', 'POST'])
 def remove():
-    winename = request.form["remname"]
-    name = cgi.escape(winename)
-    the_wine = Wine.query.filter_by(name=name).first()
+    winebrand = request.form["rembrand"]
+    winevariety = request.form["remvariety"]
+    brand = cgi.escape(winebrand)
+    variety = cgi.escape(winevariety)
+    the_wine = Wine.query.filter_by(brand=brand, variety=variety).first()
     if the_wine:
         db.session.delete(the_wine)
         db.session.commit()
         wines = Wine.query.all()
         winelist = []
         for wine in wines:
-            winestr = wine.name + ": " + wine.description
+            winestr = wine.brand + ": " + wine.variety + "- " + wine.description
             winelist.append(winestr)
         winelist.sort()
         return render_template('index.html', wines = winelist)
@@ -183,7 +198,7 @@ def remove():
         wines = Wine.query.all()
         winelist = []
         for wine in wines:
-            winestr = wine.name + ": " + wine.description
+            winestr = wine.brand + ": " + wine.variety + "- " + wine.description
             winelist.append(winestr)
         winelist.sort()
         return render_template('index.html', wines = winelist, error2 = error2)
