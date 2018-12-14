@@ -15,13 +15,14 @@ class Wine(db.Model):
     brand = db.Column(db.String(120))
     variety = db.Column(db.String(120))
     description = db.Column(db.String(120))
-    userid = db.Column(db.Integer, db.ForeignKey('user.id'))
+    userid = db.Column(db.Integer, db.ForeignKey('User.id'))
 
-    def __init__(self, timestamp, brand, variety, description, userod):
+    def __init__(self, timestamp, brand, variety, description, userid):
         self.timestamp = timestamp
         self.brand = brand
         self.variety = variety
         self.description = description
+        self.userid = userid
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,13 +43,21 @@ def make_salt():
         sal += num2
     return sal
     
-def make_pw_hash(password):
-    hash = hashlib.sha256(str.encode(password)).hexdigest()
+def make_pw_hash(password, keynum):
+    hashlist = []
+    hashlist.append(hashlib.md5(str.encode(password)).hexdigest())
+    hashlist.append(hashlib.sha1(str.encode(password)).hexdigest())
+    hashlist.append(hashlib.sha224(str.encode(password)).hexdigest())
+    hashlist.append(hashlib.sha256(str.encode(password)).hexdigest())
+    hashlist.append(hashlib.sha384(str.encode(password)).hexdigest())
+    hashlist.append(hashlib.sha512(str.encode(password)).hexdigest())
+    hash = hashlist[keynum]
     return hash
 
 def check_pw_hash(password, hash):
-    hash2 = hash[5:]
-    if make_pw_hash(password) == hash2:
+    hash2 = hash[6:]
+    hash3 = int(hash[5])
+    if make_pw_hash(password, hash3) == hash2:
         return True
     else:
         return False
@@ -91,8 +100,10 @@ def signup():
         existing_user = User.query.filter_by(email=email).first()
         if not existing_user:
             salt = make_salt()
-            hash = make_pw_hash(password)
-            password = salt + hash
+            keynm = random.randrange(6)
+            hash = make_pw_hash(password, keynm)
+            keyst = str(keynm)
+            password = salt + keyst + hash
             new_user = User(email, password)
             db.session.add(new_user)
             db.session.commit()
