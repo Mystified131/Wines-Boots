@@ -15,7 +15,7 @@ class Wine(db.Model):
     brand = db.Column(db.String(120))
     variety = db.Column(db.String(120))
     description = db.Column(db.String(120))
-    userid = db.Column(db.Integer, db.ForeignKey('User.id'))
+    user = db.Column(db.String(120))
 
     def __init__(self, timestamp, brand, variety, description, userid):
         self.timestamp = timestamp
@@ -140,9 +140,9 @@ def index():
     winelist.sort()
     return render_template('index.html', wines = winelist)
 
-@app.route("/login", methods =['GET', 'POST'])
-def frontpage():
-    return render_template('login.html')
+#@app.route("/login", methods =['GET', 'POST'])
+#def frontpage():
+    #return render_template('login.html')
 
 @app.route("/add", methods =['GET', 'POST'])
 def add():
@@ -174,9 +174,8 @@ def add():
             winelist.append(winestr)
         winelist.sort()
         return render_template('index.html', wines = winelist, error = error)
-    curusr = User.query.filter_by(email = session['email']).first()
-    userid = curusr.id
-    new_wine = Wine(timestamp, brand, variety, description, userid)
+    user = session['email']
+    new_wine = Wine(timestamp, brand, variety, description, user)
     db.session.add(new_wine)
     db.session.commit()
     wines = Wine.query.all()
