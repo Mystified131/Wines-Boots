@@ -17,12 +17,12 @@ class Wine(db.Model):
     description = db.Column(db.String(120))
     user = db.Column(db.String(120))
 
-    def __init__(self, timestamp, brand, variety, description, userid):
+    def __init__(self, timestamp, brand, variety, description, user):
         self.timestamp = timestamp
         self.brand = brand
         self.variety = variety
         self.description = description
-        self.userid = userid
+        self.user = user
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -132,17 +132,13 @@ def index():
 
     tim = "".join(list)
     session['timestamp'] = tim
-    wines = Wine.query.all()
+    wines = Wine.query.filter_by(user = session['email']).all()
     winelist = []
     for wine in wines:
         winestr = wine.brand + ": " + wine.variety + "- " + wine.description
         winelist.append(winestr)
     winelist.sort()
     return render_template('index.html', wines = winelist)
-
-#@app.route("/login", methods =['GET', 'POST'])
-#def frontpage():
-    #return render_template('login.html')
 
 @app.route("/add", methods =['GET', 'POST'])
 def add():
@@ -167,7 +163,7 @@ def add():
             error = "There is no wine with no brand."
         if old_wine:
             error = "That wine is already in the database."
-        wines = Wine.query.all()
+        wines = Wine.query.filter_by(user = session['email']).all()
         winelist = []
         for wine in wines:
             winestr = wine.brand + ": " + wine.variety + "- " + wine.description
@@ -178,7 +174,7 @@ def add():
     new_wine = Wine(timestamp, brand, variety, description, user)
     db.session.add(new_wine)
     db.session.commit()
-    wines = Wine.query.all()
+    wines = Wine.query.filter_by(user = session['email']).all()
     winelist = []
     for wine in wines:
         winestr = wine.brand + ": " + wine.variety + "- " + wine.description
@@ -192,11 +188,11 @@ def remove():
     winevariety = request.form["remvariety"]
     brand = cgi.escape(winebrand)
     variety = cgi.escape(winevariety)
-    the_wine = Wine.query.filter_by(brand=brand, variety=variety).first()
+    the_wine = Wine.query.filter_by(brand=brand, variety=variety, user = session['email']).first()
     if the_wine:
         db.session.delete(the_wine)
         db.session.commit()
-        wines = Wine.query.all()
+        wines = Wine.query.filter_by(user = session['email']).all()
         winelist = []
         for wine in wines:
             winestr = wine.brand + ": " + wine.variety + "- " + wine.description
@@ -205,13 +201,14 @@ def remove():
         return render_template('index.html', wines = winelist)
     else:
         error2 = "That wine is not in the database."
-        wines = Wine.query.all()
+        wines = Wine.query.filter_by(user = session['email']).all()
         winelist = []
         for wine in wines:
             winestr = wine.brand + ": " + wine.variety + "- " + wine.description
             winelist.append(winestr)
         winelist.sort()
         return render_template('index.html', wines = winelist, error2 = error2)
+
 
 ## THE GHOST OF THE SHADOW ##
 
